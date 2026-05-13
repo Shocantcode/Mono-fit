@@ -47,7 +47,7 @@ A comprehensive fitness tracking and workout management application built with L
 
 - **Backend**: Laravel (PHP)
 - **Frontend**: Blade templating, Tailwind CSS
-- **Database**: MySQL/SQLite
+- **Database**: MySQL
 - **Build Tool**: Vite
 - **Package Management**: Composer, npm
 
@@ -56,7 +56,7 @@ A comprehensive fitness tracking and workout management application built with L
 - PHP 8.1+
 - Composer
 - Node.js & npm
-- SQLite or MySQL database
+- MySQL database
 
 ## Installation
 
