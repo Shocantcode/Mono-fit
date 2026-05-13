@@ -32,7 +32,7 @@ MonoFit is a comprehensive workout and fitness tracking application built with L
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/monofit.git
+   git clone https://github.com/Shocantcode/monofit.git
    cd monofit
    ```
 
@@ -131,9 +131,6 @@ Built with using Laravel and Tailwind CSS.
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
