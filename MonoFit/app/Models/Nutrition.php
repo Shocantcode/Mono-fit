@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Nutrition extends Model
 {
+    protected $table = 'nutritions';
+
     protected $fillable = [
         'user_id', 'date', 'meals', 'total_calories', 'protein', 'carbs', 'fat', 'water_intake'
     ];

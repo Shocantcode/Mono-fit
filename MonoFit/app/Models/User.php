@@ -36,4 +36,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(\App\Models\Onboarding::class);
     }
+
+    public function nutritions()
+    {
+        return $this->hasMany(\App\Models\Nutrition::class);
+    }
+
+    public function workouts()
+    {
+        return $this->hasMany(\App\Models\Workout::class);
+    }
+
+    public function progresses()
+    {
+        return $this->hasMany(\App\Models\Progress::class);
+    }
 }
