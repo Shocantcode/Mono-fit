@@ -6,7 +6,6 @@ MonoFit is a comprehensive workout and fitness tracking application built with L
 | Nama                        | GitHub                                        |
 | --------------------------- | --------------------------------------------- |
 | Kenzie Rolland Gracia       | [Shocantcode](https://github.com/Shocantcode) |
-
 | Nicholas Febrian Maladi     | [nicfebma](https://github.com/nicfebma)       |
 | Maulana Isabril Hafidz      | [maulhafidz](https://github.com/maulhafidz)   |
 | Reyven Theo Bastian Pribadi | [mowakino](https://github.com/mowakino)       |
