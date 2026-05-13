@@ -10,6 +10,7 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\ReminderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,6 +37,11 @@ Route::middleware('auth')->group(function () {
 
     // Progress
     Route::get('/progress', [ProgressController::class, 'index'])->name('progress.index');
+
+    // Reminder
+    Route::get('/reminder', [ReminderController::class, 'index'])->name('reminder.index');
+    Route::get('/reminder/create', [ReminderController::class, 'create'])->name('reminder.create');
+    Route::post('/reminder', [ReminderController::class, 'store'])->name('reminder.store');
 
     // Exercise Library
     Route::get('/exercises', [ExerciseController::class, 'index'])->name('exercises.index');

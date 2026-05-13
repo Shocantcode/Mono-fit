@@ -9,7 +9,12 @@ class Reminder extends Model
     protected $table = 'reminders';
 
     protected $fillable = [
-        'user_id', 'type', 'message', 'scheduled_at', 'sent'
+        'user_id', 'type', 'time', 'message', 'sent_at'
+    ];
+
+    protected $casts = [
+        'time' => 'datetime:H:i',
+        'sent_at' => 'datetime',
     ];
 
     public function user()

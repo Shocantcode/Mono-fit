@@ -11,13 +11,7 @@ class ProgressController extends Controller
     {
         $user = Auth::user();
 
-        $streak = $user->progresses()
-            ->orderByDesc('date')
-            ->where('workout_completed', true)
-            ->get()
-            ->takeWhile(fn ($p) => $p->date->isToday() || $p->date->isYesterday() || true)
-            ->count();
-
+        // Get current streak from the most recent progress record
         $streak = optional(
             $user->progresses()->orderByDesc('date')->first()
         )->streak ?? 0;
