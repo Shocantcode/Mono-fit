@@ -9,7 +9,7 @@ A comprehensive fitness tracking and workout management application built with L
 | Nicholas Febrian Maladi     | [nicfebma](https://github.com/nicfebma)       |
 | Maulana Isabril Hafidz      | [maulhafidz](https://github.com/maulhafidz)   |
 | Reyven Theo Bastian Pribadi | [mowakino](https://github.com/mowakino)       |
-| Ryan Setiadi                | [Insuxed](https://github.com/Ins)             |
+| Javier Ryan Setiadi         | [Insuxed](https://github.com/Ins)             |
 
 ## Features
 
