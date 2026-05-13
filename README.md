@@ -2,6 +2,16 @@
 
 MonoFit is a comprehensive workout and fitness tracking application built with Laravel. It helps users manage their fitness journey by tracking workouts, nutrition, progress, and providing personalized reminders.
 
+## Author
+| Nama                        | GitHub                                        |
+| --------------------------- | --------------------------------------------- |
+| Kenzie Rolland Gracia       | [Shocantcode](https://github.com/Shocantcode) |
+
+| Nicholas Febrian Maladi     | [nicfebma](https://github.com/nicfebma)       |
+| Maulana Isabril Hafidz      | [maulhafidz](https://github.com/maulhafidz)   |
+| Reyven Theo Bastian Pribadi | [mowakino](https://github.com/mowakino)       |
+| Ryan Setiadi                | [Insuxed](https://github.com/Ins)             |
+
 ## Features
 
 - **User Management**: Secure user authentication and profiles
