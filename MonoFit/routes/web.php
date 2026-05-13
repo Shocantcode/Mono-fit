@@ -10,6 +10,7 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\ReminderController;
 
 Route::get('/', function () {
     return view('welcome');
