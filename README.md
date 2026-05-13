@@ -1,4 +1,4 @@
-# MonoFit - Fitness & Wellness Application
+# MonoFit - Fitness Application
 
 A comprehensive fitness tracking and workout management application built with Laravel. MonoFit helps users achieve their fitness goals through workout planning, nutrition tracking, progress monitoring, and personalized reminders.
 
