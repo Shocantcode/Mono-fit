@@ -1,6 +1,6 @@
-# MonoFit - Workout Application
+# MonoFit - Fitness & Wellness Application
 
-MonoFit is a comprehensive workout and fitness tracking application built with Laravel. It helps users manage their fitness journey by tracking workouts, nutrition, progress, and providing personalized reminders.
+A comprehensive fitness tracking and workout management application built with Laravel. MonoFit helps users achieve their fitness goals through workout planning, nutrition tracking, progress monitoring, and personalized reminders.
 
 ## Author
 | Nama                        | GitHub                                        |
@@ -13,124 +13,223 @@ MonoFit is a comprehensive workout and fitness tracking application built with L
 
 ## Features
 
-- **User Management**: Secure user authentication and profiles
-- **Workout Tracking**: Create and track custom workouts with exercises
-- **Nutrition Logging**: Monitor daily nutrition intake and goals
-- **Progress Monitoring**: Track fitness progress over time with charts and metrics
-- **Reminders**: Set personalized workout and nutrition reminders
-- **Onboarding**: Guided onboarding process for new users
-- **Responsive Design**: Modern, mobile-friendly interface built with Tailwind CSS
+### 🏋️ Workout Management
+- Create and manage personalized workout routines
+- Track exercises with detailed sets and reps
+- View and schedule workouts
+
+### 🥗 Nutrition Tracking
+- Log daily nutrition intake
+- Monitor nutritional values and goals
+- Track calorie consumption
+
+### 📊 Progress Tracking
+- Monitor fitness progress over time
+- Track body metrics and performance improvements
+- Visual progress dashboards
+
+### ⏰ Reminders & Notifications
+- Set personalized workout reminders
+- Schedule nutrition check-ins
+- Stay on top of fitness goals
+
+### 👤 User Management
+- Secure authentication and authorization
+- User profiles and settings
+- Personalized user experience
+
+### 🎯 Onboarding
+- Guided setup for new users
+- Initial fitness assessment
+- Goal setting during onboarding
+
+## Tech Stack
+
+- **Backend**: Laravel (PHP)
+- **Frontend**: Blade templating, Tailwind CSS
+- **Database**: MySQL/SQLite
+- **Build Tool**: Vite
+- **Package Management**: Composer, npm
 
 ## Requirements
 
-- PHP 8.1 or higher
+- PHP 8.1+
 - Composer
-- Node.js and npm
-- MySQL or another supported database
+- Node.js & npm
+- SQLite or MySQL database
 
 ## Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Shocantcode/monofit.git
-   cd monofit
-   ```
+### 1. Clone the repository
+```bash
+git clone <repository-url>
+cd MonoFit
+```
 
-2. **Install PHP dependencies:**
-   ```bash
-   composer install
-   ```
+### 2. Install PHP dependencies
+```bash
+composer install
+```
 
-3. **Install Node.js dependencies:**
-   ```bash
-   npm install
-   ```
+### 3. Install JavaScript dependencies
+```bash
+npm install
+```
 
-4. **Environment Setup:**
-   - Copy `.env.example` to `.env`
-   - Configure your database settings in `.env`
-   - Generate application key:
-     ```bash
-     php artisan key:generate
-     ```
+### 4. Environment setup
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-5. **Database Setup:**
-   ```bash
-   php artisan migrate
-   php artisan db:seed  # Optional: to seed initial data
-   ```
+Update your `.env` file with database credentials and other configuration settings.
 
-6. **Build Assets:**
-   ```bash
-   npm run build
-   # or for development
-   npm run dev
-   ```
+### 5. Database setup
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-7. **Start the Application:**
-   ```bash
-   php artisan serve
-   ```
+### 6. Build assets
+```bash
+npm run build
+```
 
-   Visit `http://localhost:8000` in your browser.
+For development with hot reload:
+```bash
+npm run dev
+```
 
-## Usage
+## Running the Application
 
-### For Users
-- Register/Login to access your dashboard
-- Complete the onboarding process
-- Create and log your workouts
-- Track your nutrition intake
-- Monitor your progress with charts
-- Set reminders for workouts and meals
+### Start the development server
+```bash
+php artisan serve
+```
 
-### For Developers
-- Run tests: `php artisan test`
-- Run linter: `./vendor/bin/pint`
-- Build assets for production: `npm run build`
+The application will be available at `http://localhost:8000`
 
 ## Project Structure
 
 ```
-MonoFit/
-├── app/
-│   ├── Http/Controllers/     # Controllers
-│   ├── Models/              # Eloquent Models
-│   └── Providers/           # Service Providers
-├── database/
-│   ├── migrations/          # Database migrations
-│   └── seeders/            # Database seeders
-├── public/                  # Public assets
-├── resources/
-│   ├── css/                # Stylesheets
-│   ├── js/                 # JavaScript files
-│   └── views/              # Blade templates
-├── routes/                  # Route definitions
-└── tests/                   # Test files
+app/
+├── Http/
+│   ├── Controllers/      # Route handlers
+│   └── Requests/         # Form validation
+├── Models/               # Database models
+│   ├── User.php
+│   ├── Workout.php
+│   ├── Nutrition.php
+│   ├── Progress.php
+│   ├── Reminder.php
+│   └── Onboarding.php
+└── Providers/            # Service providers
+
+database/
+├── migrations/           # Database schema
+├── factories/            # Model factories for testing
+└── seeders/              # Database seeders
+
+routes/
+├── web.php               # Web routes
+├── auth.php              # Authentication routes
+└── console.php           # Console commands
+
+resources/
+├── css/                  # Stylesheets
+├── js/                   # JavaScript
+└── views/                # Blade templates
+    ├── auth/             # Authentication pages
+    ├── workout/          # Workout management
+    ├── nutrition/        # Nutrition tracking
+    ├── progress/         # Progress dashboards
+    ├── schedule/         # Schedule views
+    └── profile/          # User profile
 ```
+
+## Configuration
+
+### Database
+Update database settings in `.env`:
+```
+DB_CONNECTION=sqlite
+DB_DATABASE=database/database.sqlite
+```
+
+### Mail & Notifications
+Configure mail driver in `.env` for sending reminders and notifications.
+
+### Cache & Sessions
+Default cache and session drivers can be configured in `.env`.
+
+## Testing
+
+Run tests with PHPUnit:
+```bash
+php artisan test
+```
+
+Run specific test file:
+```bash
+php artisan test --filter ProfileTest
+```
+
+## Artisan Commands
+
+Common Laravel artisan commands for this project:
+
+```bash
+# Create new model with migration
+php artisan make:model ModelName -m
+
+# Create new controller
+php artisan make:controller ControllerName
+
+# Run migrations
+php artisan migrate
+
+# Rollback migrations
+php artisan migrate:rollback
+
+# Clear application cache
+php artisan cache:clear
+```
+
+## API Routes
+
+The application includes RESTful routes for managing:
+- Users (authentication & profile)
+- Workouts (CRUD operations)
+- Nutrition (logging & tracking)
+- Progress (metrics & stats)
+- Reminders (scheduling & management)
+
+## Deployment
+
+1. Update `.env` for production environment
+2. Set `APP_DEBUG=false`
+3. Run migrations: `php artisan migrate --force`
+4. Optimize for production:
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   ```
+5. Build frontend assets: `npm run build`
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please follow the existing code style and include tests for new features.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-If you have any questions or need help, please open an issue on GitHub or contact the development team.
-
----
-
-Built with using Laravel and Tailwind CSS.
+This project is open source software licensed under the MIT license.
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
+## Security Vulnerabilities
+
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
