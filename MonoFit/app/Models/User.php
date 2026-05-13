@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Progress::class);
     }
+
+    public function reminders()
+    {
+        return $this->hasMany(\App\Models\Reminder::class);
+    }
 }
