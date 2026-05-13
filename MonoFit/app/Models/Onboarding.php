@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Onboarding extends Model
 {
+    protected $table = 'onboardings';
+
     protected $fillable = [
         'user_id', 'age', 'gender', 'height', 'weight', 'body_fat', 'activity_level', 'fitness_goal', 'equipment', 'bmi', 'bmr', 'tdee', 'somatotype'
     ];
