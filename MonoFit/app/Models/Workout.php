@@ -12,6 +12,12 @@ class Workout extends Model
         'user_id', 'date', 'exercises', 'total_sets', 'total_reps', 'total_weight', 'completed', 'notes'
     ];
 
+    protected $casts = [
+        'date' => 'date',
+        'exercises' => 'array',
+        'completed' => 'boolean',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

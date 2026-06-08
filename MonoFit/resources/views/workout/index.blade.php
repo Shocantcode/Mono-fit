@@ -135,24 +135,34 @@
             <h3 style="font-size:18px;font-weight:700;color:#fff;">Log Exercise</h3>
             <button onclick="document.getElementById('log-modal').style.display='none'" style="background:rgba(255,255,255,0.08);border:none;color:#aaa;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;">✕</button>
         </div>
-        <form action="#" method="POST" style="display:flex;flex-direction:column;gap:14px;">
+        <form action="{{ route('workout.store') }}" method="POST" style="display:flex;flex-direction:column;gap:14px;">
             @csrf
             <div>
-                <label style="font-size:12px;color:#666;display:block;margin-bottom:6px;">Exercise Name</label>
-                <input type="text" name="name" placeholder="e.g. Bench Press" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;outline:none;">
+                <label style="font-size:12px;color:#666;display:block;margin-bottom:6px;">Exercise</label>
+                <select id="exercise-select" name="exercise" required style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;outline:none;">
+                    <option value="">Select exercise</option>
+                    <option value="Push-ups">Push-ups</option>
+                    <option value="Squats">Squats</option>
+                    <option value="Bench Press">Bench Press</option>
+                    <option value="Dumbbell Row">Dumbbell Row</option>
+                    <option value="Deadlift">Deadlift</option>
+                    <option value="Plank">Plank</option>
+                    <option value="Tricep Dips">Tricep Dips</option>
+                    <option value="Bicep Curl">Bicep Curl</option>
+                </select>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
                 <div>
                     <label style="font-size:12px;color:#666;display:block;margin-bottom:6px;">Sets</label>
-                    <input type="number" name="sets" placeholder="4" min="1" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 10px;color:#fff;font-size:14px;text-align:center;outline:none;">
+                    <input type="number" name="sets" placeholder="4" min="1" required style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 10px;color:#fff;font-size:14px;text-align:center;outline:none;">
                 </div>
                 <div>
                     <label style="font-size:12px;color:#666;display:block;margin-bottom:6px;">Reps</label>
-                    <input type="number" name="reps" placeholder="10" min="1" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 10px;color:#fff;font-size:14px;text-align:center;outline:none;">
+                    <input type="text" name="reps" placeholder="8-12" required style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 10px;color:#fff;font-size:14px;text-align:center;outline:none;">
                 </div>
                 <div>
                     <label style="font-size:12px;color:#666;display:block;margin-bottom:6px;">Weight (kg)</label>
-                    <input type="number" name="weight" placeholder="60" step="0.5" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 10px;color:#fff;font-size:14px;text-align:center;outline:none;">
+                    <input id="exercise-weight" type="number" name="weight" placeholder="60" step="0.5" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 10px;color:#fff;font-size:14px;text-align:center;outline:none;">
                 </div>
             </div>
             <button type="submit" style="background:linear-gradient(135deg,#ff4500,#ff6a00);color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;">
@@ -161,5 +171,27 @@
         </form>
     </div>
 </div>
+
+<script>
+    const exerciseSelect = document.getElementById('exercise-select');
+    const weightInput = document.getElementById('exercise-weight');
+    const bodyweightExercises = ['Push-ups', 'Squats', 'Plank'];
+
+    function updateWeightField() {
+        if (bodyweightExercises.includes(exerciseSelect.value)) {
+            weightInput.value = '';
+            weightInput.placeholder = 'Bodyweight';
+            weightInput.readOnly = true;
+            weightInput.style.opacity = '0.6';
+        } else {
+            weightInput.readOnly = false;
+            weightInput.placeholder = 'kg';
+            weightInput.style.opacity = '1';
+        }
+    }
+
+    exerciseSelect.addEventListener('change', updateWeightField);
+    updateWeightField();
+</script>
 
 @endsection

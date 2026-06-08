@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
 
     // Workout
     Route::get('/workout', [WorkoutController::class, 'index'])->name('workout.index');
+    Route::post('/workout', [WorkoutController::class, 'store'])->name('workout.store');
 
     // Nutrition
     Route::get('/nutrition', [NutritionController::class, 'index'])->name('nutrition.index');
