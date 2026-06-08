@@ -7,7 +7,9 @@
     <title>{{ config('app.name', 'MonoFit') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     <style>
         * { box-sizing: border-box; }
         body { background: #0a0a0a; color: #fff; font-family: 'Figtree', sans-serif; margin: 0; padding: 0; }
