@@ -151,22 +151,42 @@
     <div style="background:#141414;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:20px;margin-bottom:4px;">
         <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">Weight Tracker</h3>
         <p style="font-size:12px;color:#555;margin-bottom:16px;">Past 7 days progress</p>
-        <div style="position:relative;height:120px;margin-bottom:16px;">
-            <svg width="100%" height="100" style="overflow:visible;" id="weightChart">
-                <polyline points="10,80 25,70 40,75 55,60 70,75 85,50 100,65" fill="none" stroke="url(#gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <div style="position:relative;height:180px;margin-bottom:16px;">
+            <svg viewBox="0 0 320 120" width="100%" height="100%" style="overflow:visible;" id="weightChart">
                 <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" style="stop-color:#ff4500;stop-opacity:1" />
                         <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
                     </linearGradient>
                 </defs>
-                <circle cx="10" cy="80" r="2" fill="#ff4500" />
-                <circle cx="25" cy="70" r="2" fill="#ff4500" />
-                <circle cx="40" cy="75" r="2" fill="#ff4500" />
-                <circle cx="55" cy="60" r="2" fill="#ff4500" />
-                <circle cx="70" cy="75" r="2" fill="#ff4500" />
-                <circle cx="85" cy="50" r="2" fill="#10b981" />
-                <circle cx="100" cy="65" r="2.5" fill="#10b981" />
+                <line x1="20" y1="100" x2="300" y2="100" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                <line x1="20" y1="20" x2="20" y2="100" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                <polyline points="20,90 70,78 120,84 170,62 220,80 270,50 300,70" fill="none" stroke="url(#gradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="20" cy="90" r="3" fill="#ff4500" />
+                <circle cx="70" cy="78" r="3" fill="#ff4500" />
+                <circle cx="120" cy="84" r="3" fill="#ff4500" />
+                <circle cx="170" cy="62" r="3" fill="#ff4500" />
+                <circle cx="220" cy="80" r="3" fill="#ff4500" />
+                <circle cx="270" cy="50" r="3" fill="#10b981" />
+                <circle cx="300" cy="70" r="3.5" fill="#10b981" />
+                <g fill="#888" font-size="10" text-anchor="middle">
+                    <text x="20" y="115">Mon</text>
+                    <text x="70" y="115">Tue</text>
+                    <text x="120" y="115">Wed</text>
+                    <text x="170" y="115">Thu</text>
+                    <text x="220" y="115">Fri</text>
+                    <text x="270" y="115">Sat</text>
+                    <text x="300" y="115">Sun</text>
+                </g>
+                <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
+                    <line x1="20" y1="100" x2="20" y2="18" />
+                    <line x1="70" y1="100" x2="70" y2="18" />
+                    <line x1="120" y1="100" x2="120" y2="18" />
+                    <line x1="170" y1="100" x2="170" y2="18" />
+                    <line x1="220" y1="100" x2="220" y2="18" />
+                    <line x1="270" y1="100" x2="270" y2="18" />
+                    <line x1="300" y1="100" x2="300" y2="18" />
+                </g>
             </svg>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,69,0,0.08);border:1px solid rgba(255,69,0,0.15);border-radius:12px;">

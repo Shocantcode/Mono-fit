@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -61,6 +62,14 @@ class ProfileController extends Controller
     {
         $validated = $request->validated();
         $user = $request->user();
+
+        if ($user->email !== $validated['email']) {
+            if (! $request->filled('current_password') || ! Hash::check($request->input('current_password'), $user->password)) {
+                return Redirect::back()
+                    ->withErrors(['current_password' => 'Current password is required to change email.'])
+                    ->withInput();
+            }
+        }
 
         $user->fill(Arr::only($validated, ['name', 'email']));
 

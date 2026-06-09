@@ -32,6 +32,7 @@ class ProfileUpdateRequest extends FormRequest
             'weight' => ['required', 'numeric', 'min:30', 'max:250'],
             'activity_level' => ['required', 'string'],
             'fitness_goal' => ['required', 'in:fat_loss,muscle_gain,maintenance'],
+            'current_password' => ['nullable', 'current_password'],
         ];
     }
 }
