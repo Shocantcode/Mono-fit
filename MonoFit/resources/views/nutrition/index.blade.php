@@ -17,19 +17,23 @@
         <h3 style="font-size:14px;font-weight:600;color:#666;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px;">Daily Calories</h3>
         <div style="display:flex;align-items:center;gap:20px;">
             <div style="text-align:center;">
-                <div style="font-size:40px;font-weight:800;color:#3b82f6;line-height:1;">{{ $calories ?? 0 }}</div>
-                <div style="font-size:11px;color:#555;margin-top:4px;">Consumed</div>
+                <div style="font-size:40px;font-weight:800;color:#3b82f6;line-height:1;">{{ $targetCalories }}</div>
+                <div style="font-size:11px;color:#555;margin-top:4px;">Daily Calorie Target</div>
+                <div style="font-size:12px;color:#888;margin-top:6px;">Consumed: <span style="color:#fff;font-weight:700;">{{ $calories ?? 0 }}</span> kcal</div>
+                @if($goalLabel)
+                    <div style="font-size:11px;color:#6ee7b7;margin-top:4px;">Goal: {{ $goalLabel }}</div>
+                @endif
             </div>
             <div style="flex:1;">
                 <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-size:12px;color:#666;">{{ $calories ?? 0 }} / 2000 kcal</span>
-                    <span style="font-size:12px;color:#3b82f6;font-weight:600;">{{ min(100, round(($calories ?? 0) / 2000 * 100)) }}%</span>
+                    <span style="font-size:12px;color:#666;">{{ $calories ?? 0 }} / {{ $targetCalories }} kcal</span>
+                    <span style="font-size:12px;color:#3b82f6;font-weight:600;">{{ min(100, round(($calories ?? 0) / max(1, $targetCalories) * 100)) }}%</span>
                 </div>
                 <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
-                    <div style="height:100%;width:{{ min(100, round(($calories ?? 0) / 2000 * 100)) }}%;background:linear-gradient(90deg,#3b82f6,#6366f1);border-radius:4px;transition:width 0.5s;"></div>
+                    <div style="height:100%;width:{{ min(100, round(($calories ?? 0) / max(1, $targetCalories) * 100)) }}%;background:linear-gradient(90deg,#3b82f6,#6366f1);border-radius:4px;transition:width 0.5s;"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;margin-top:6px;">
-                    <span style="font-size:11px;color:#444;">Remaining: <b style="color:#fff;">{{ max(0, 2000 - ($calories ?? 0)) }} kcal</b></span>
+                    <span style="font-size:11px;color:#444;">Remaining: <b style="color:#fff;">{{ max(0, $targetCalories - ($calories ?? 0)) }} kcal</b></span>
                 </div>
             </div>
         </div>
