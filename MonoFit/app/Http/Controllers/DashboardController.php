@@ -35,7 +35,9 @@ class DashboardController extends Controller
             'fat' => $nutrition->fat ?? 0,
             'water' => $nutrition->water_intake ?? 0,
             'workout' => $workout ? [
-                'exercises' => json_decode($workout->exercises, true) ?? []
+                'exercises' => is_array($workout->exercises)
+                    ? $workout->exercises
+                    : (json_decode($workout->exercises ?? '[]', true) ?? [])
             ] : null,
             'streak' => $progress->streak ?? 0,
             'bmi' => $bmi,
