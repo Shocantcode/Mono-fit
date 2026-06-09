@@ -72,13 +72,17 @@
         </div>
         @php
             $weekDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-            $heights = [65, 90, 45, 100, 30, 80, 55];
             $todayIndex = (int) now()->format('N') - 1;
+            $maxCount = max($weeklyActivity->values()->all()) ?: 1;
         @endphp
         <div style="display:flex;align-items:flex-end;gap:8px;height:90px;">
             @foreach($weekDays as $i => $day)
+            @php
+                $count = $weeklyActivity[$day] ?? 0;
+                $height = max(10, round(($count / $maxCount) * 100));
+            @endphp
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
-                <div style="width:100%;background:{{ $i === $todayIndex ? 'linear-gradient(180deg,#ff4500,#ff6a00)' : 'rgba(255,255,255,0.07)' }};border-radius:6px 6px 4px 4px;height:{{ $heights[$i] }}%;position:relative;transition:all 0.3s;min-height:8px;">
+                <div style="width:100%;background:{{ $i === $todayIndex ? 'linear-gradient(180deg,#ff4500,#ff6a00)' : 'rgba(255,255,255,0.07)' }};border-radius:6px 6px 4px 4px;height:{{ $height }}%;position:relative;transition:all 0.3s;min-height:8px;">
                     @if($i === $todayIndex)
                     <div style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:#ff4500;border-radius:50%;"></div>
                     @endif
@@ -89,15 +93,15 @@
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);">
             <div style="text-align:center;">
-                <div style="font-size:18px;font-weight:700;color:#fff;">5</div>
+                <div style="font-size:18px;font-weight:700;color:#fff;">{{ $workoutsThisWeek }}</div>
                 <div style="font-size:11px;color:#555;">Workouts</div>
             </div>
             <div style="text-align:center;">
-                <div style="font-size:18px;font-weight:700;color:#fff;">2,450</div>
+                <div style="font-size:18px;font-weight:700;color:#fff;">{{ $avgKcal ? number_format($avgKcal) : '0' }}</div>
                 <div style="font-size:11px;color:#555;">Avg Kcal</div>
             </div>
             <div style="text-align:center;">
-                <div style="font-size:18px;font-weight:700;color:#fff;">2.4L</div>
+                <div style="font-size:18px;font-weight:700;color:#fff;">{{ $avgWater ? number_format($avgWater, 1) : '0.0' }}L</div>
                 <div style="font-size:11px;color:#555;">Avg Water</div>
             </div>
         </div>
@@ -106,17 +110,9 @@
     {{-- Goal Progress --}}
     <div style="background:#141414;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:20px;">
         <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">Goal Progress</h3>
-        @php
-            $goals = [
-                ['label'=>'Weight Loss Goal','current'=>78,'target'=>70,'unit'=>'kg','color'=>'#ff4500','icon'=>'⚖️'],
-                ['label'=>'Weekly Workouts','current'=>5,'target'=>6,'unit'=>'sessions','color'=>'#10b981','icon'=>'🏋️'],
-                ['label'=>'Daily Water','current'=>2.2,'target'=>3,'unit'=>'liters','color'=>'#06b6d4','icon'=>'💧'],
-                ['label'=>'Protein Goal','current'=>120,'target'=>150,'unit'=>'g/day','color'=>'#3b82f6','icon'=>'🥩'],
-            ];
-        @endphp
         <div style="display:flex;flex-direction:column;gap:14px;">
             @foreach($goals as $goal)
-            @php $pct = min(100, round($goal['current'] / $goal['target'] * 100)); @endphp
+            @php $pct = $goal['target'] > 0 ? min(100, round($goal['current'] / $goal['target'] * 100)) : 0; @endphp
             <div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
                     <div style="display:flex;align-items:center;gap:8px;">
@@ -137,16 +133,6 @@
     {{-- Achievements --}}
     <div style="background:#141414;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:20px;">
         <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:14px;">Achievements 🏆</h3>
-        @php
-            $badges = [
-                ['emoji'=>'🔥','name'=>'On Fire','desc'=>'7 day streak','unlocked'=>true],
-                ['emoji'=>'💪','name'=>'Iron Will','desc'=>'30 workouts logged','unlocked'=>true],
-                ['emoji'=>'🥗','name'=>'Clean Eater','desc'=>'14 days on target macros','unlocked'=>true],
-                ['emoji'=>'💧','name'=>'Hydrated','desc'=>'Hit water goal 7 days','unlocked'=>false],
-                ['emoji'=>'🏃','name'=>'Cardio King','desc'=>'10 cardio sessions','unlocked'=>false],
-                ['emoji'=>'⚡','name'=>'Power Week','desc'=>'6 workouts in one week','unlocked'=>false],
-            ];
-        @endphp
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
             @foreach($badges as $badge)
             <div style="background:{{ $badge['unlocked'] ? 'rgba(245,158,11,0.08)' : 'rgba(255,255,255,0.03)' }};border:1px solid {{ $badge['unlocked'] ? 'rgba(245,158,11,0.25)' : 'rgba(255,255,255,0.06)' }};border-radius:14px;padding:14px;text-align:center;position:relative;">
