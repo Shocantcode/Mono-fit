@@ -44,10 +44,10 @@
         <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:16px;">Macronutrients</h3>
         @php
             $macros = [
-                ['name'=>'Protein','value'=>$protein ?? 0,'goal'=>150,'unit'=>'g','color'=>'#3b82f6','bg'=>'rgba(59,130,246,0.1)','border'=>'rgba(59,130,246,0.2)'],
-                ['name'=>'Carbs','value'=>$carbs ?? 0,'goal'=>250,'unit'=>'g','color'=>'#f59e0b','bg'=>'rgba(245,158,11,0.1)','border'=>'rgba(245,158,11,0.2)'],
-                ['name'=>'Fat','value'=>$fat ?? 0,'goal'=>65,'unit'=>'g','color'=>'#ef4444','bg'=>'rgba(239,68,68,0.1)','border'=>'rgba(239,68,68,0.2)'],
-                ['name'=>'Water','value'=>$water ?? 0,'goal'=>3,'unit'=>'L','color'=>'#06b6d4','bg'=>'rgba(6,182,212,0.1)','border'=>'rgba(6,182,212,0.2)'],
+                ['name'=>'Protein','value'=>$protein ?? 0,'goal'=> $proteinGoal ?? 0,'unit'=>'g','color'=>'#3b82f6','bg'=>'rgba(59,130,246,0.1)','border'=>'rgba(59,130,246,0.2)'],
+                ['name'=>'Carbs','value'=>$carbs ?? 0,'goal'=> $carbsGoal ?? 0,'unit'=>'g','color'=>'#f59e0b','bg'=>'rgba(245,158,11,0.1)','border'=>'rgba(245,158,11,0.2)'],
+                ['name'=>'Fat','value'=>$fat ?? 0,'goal'=> $fatGoal ?? 0,'unit'=>'g','color'=>'#ef4444','bg'=>'rgba(239,68,68,0.1)','border'=>'rgba(239,68,68,0.2)'],
+                ['name'=>'Water','value'=>$water ?? 0,'goal'=> $waterGoalL ?? 0,'unit'=>'L','color'=>'#06b6d4','bg'=>'rgba(6,182,212,0.1)','border'=>'rgba(6,182,212,0.2)'],
             ];
         @endphp
         <div style="display:flex;flex-direction:column;gap:14px;">
