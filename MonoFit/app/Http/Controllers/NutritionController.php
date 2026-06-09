@@ -19,8 +19,10 @@ class NutritionController extends Controller
         $fat      = $nutrition?->fat ?? 0;
         $water    = $nutrition?->water_intake ?? 0;
 
-        $targetCalories = $onboarding?->recommended_calories ?? 2000;
+        $targetCalories = $onboarding?->recommended_calories ?? ($onboarding?->tdee ? round($onboarding->tdee) : 2000);
         $goalLabel = null;
+        $weight = $onboarding?->weight ?? 0;
+        $fitnessGoal = $onboarding?->fitness_goal ?? 'maintenance';
 
         if ($onboarding?->fitness_goal) {
             $goalLabel = match ($onboarding->fitness_goal) {
@@ -31,6 +33,34 @@ class NutritionController extends Controller
             };
         }
 
-        return view('nutrition.index', compact('calories', 'protein', 'carbs', 'fat', 'water', 'targetCalories', 'goalLabel'));
+        $proteinMultiplier = match ($fitnessGoal) {
+            'fat_loss' => 1.8,
+            'muscle_gain' => 2.0,
+            default => 1.4,
+        };
+
+        $proteinGoal = round($proteinMultiplier * $weight, 1);
+        $fatGoal = round(0.9 * $weight, 1);
+        $waterGoalMl = round(35 * $weight);
+        $waterGoalL = round($waterGoalMl / 1000, 2);
+
+        $caloriesFromProtein = $proteinGoal * 4;
+        $caloriesFromFat = $fatGoal * 9;
+        $carbsGoal = max(0, round(($targetCalories - ($caloriesFromProtein + $caloriesFromFat)) / 4, 1));
+
+        return view('nutrition.index', compact(
+            'calories',
+            'protein',
+            'carbs',
+            'fat',
+            'water',
+            'targetCalories',
+            'goalLabel',
+            'proteinGoal',
+            'fatGoal',
+            'carbsGoal',
+            'waterGoalMl',
+            'waterGoalL'
+        ));
     }
 }

@@ -77,6 +77,9 @@
                 ['name'=>'Glute Kickbacks','category'=>'Glutes','muscle'=>'Gluteus Maximus','difficulty'=>'Beginner','equipment'=>'Cable Machine','emoji'=>'🍑','color'=>'rgba(251,146,60,0.1)','border'=>'rgba(251,146,60,0.2)','desc'=>'Kick your leg back against cable resistance to isolate the glutes.'],
                 ['name'=>'Sumo Squat','category'=>'Glutes','muscle'=>'Glutes, Inner Thighs','difficulty'=>'Beginner','equipment'=>'Dumbbells','emoji'=>'🍑','color'=>'rgba(251,146,60,0.1)','border'=>'rgba(251,146,60,0.2)','desc'=>'Wide stance squat that targets glutes and inner thighs more than regular squat.'],
             ];
+            $exercises = array_map(function($item) {
+                return array_merge(['image' => 'placeholder.gif'], $item);
+            }, $exercises);
         @endphp
 
         @foreach($exercises as $ex)
@@ -84,7 +87,9 @@
              data-category="{{ $ex['category'] }}"
              data-name="{{ strtolower($ex['name']) }} {{ strtolower($ex['muscle']) }}"
              style="background:#141414;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px;display:flex;gap:14px;align-items:flex-start;">
-            <div style="width:46px;height:46px;background:{{ $ex['color'] }};border:1px solid {{ $ex['border'] }};border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">{{ $ex['emoji'] }}</div>
+            <div style="width:46px;height:46px;background:{{ $ex['color'] }};border:1px solid {{ $ex['border'] }};border-radius:13px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+                <img src="{{ asset('images/exercises/' . $ex['image']) }}" alt="{{ $ex['name'] }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" />
+            </div>
             <div style="flex:1;min-width:0;">
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
                     <div style="font-size:15px;font-weight:700;color:#fff;">{{ $ex['name'] }}</div>
