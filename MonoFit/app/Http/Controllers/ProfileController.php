@@ -32,7 +32,11 @@ class ProfileController extends Controller
         ];
 
         foreach ($allWorkouts as $workout) {
-            foreach ($workout->exercises as $exercise) {
+            $workoutExercises = is_array($workout->exercises)
+                ? $workout->exercises
+                : json_decode($workout->exercises ?? '[]', true) ?? [];
+
+            foreach ($workoutExercises as $exercise) {
                 if (isset($exercise['weight']) && is_numeric($exercise['weight']) && ($personalRecords['heaviest_lift']['weight'] === null || $exercise['weight'] > $personalRecords['heaviest_lift']['weight'])) {
                     $personalRecords['heaviest_lift'] = [
                         'name' => $exercise['name'] ?? 'Exercise',
