@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
 
     // Nutrition
     Route::get('/nutrition', [NutritionController::class, 'index'])->name('nutrition.index');
+    Route::post('/nutrition/meal', [NutritionController::class, 'storeMeal'])->name('nutrition.meal.store');
+    Route::post('/nutrition/water', [NutritionController::class, 'storeWater'])->name('nutrition.water.store');
 
     // Progress
     Route::get('/progress', [ProgressController::class, 'index'])->name('progress.index');

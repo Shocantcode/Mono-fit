@@ -9,7 +9,18 @@ class Nutrition extends Model
     protected $table = 'nutritions';
 
     protected $fillable = [
-        'user_id', 'date', 'meals', 'total_calories', 'protein', 'carbs', 'fat', 'water_intake'
+        'user_id',
+        'date',
+        'meals',
+        'total_calories',
+        'protein',
+        'carbs',
+        'fat',
+        'water_intake',
+    ];
+
+    protected $casts = [
+        'meals' => 'array',
     ];
 
     public function user()
