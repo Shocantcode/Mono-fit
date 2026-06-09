@@ -26,7 +26,7 @@ class ProgressController extends Controller
         foreach ($completedWorkouts as $workout) {
             $dayKey = $workout->date->format('D');
             if ($weeklyActivity->has($dayKey)) {
-                $weeklyActivity[$dayKey]++;
+                $weeklyActivity->put($dayKey, $weeklyActivity->get($dayKey, 0) + 1);
             }
         }
 

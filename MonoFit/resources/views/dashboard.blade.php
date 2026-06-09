@@ -97,7 +97,9 @@
                     </div>
                     <div style="flex:1;">
                         <div style="font-size:14px;font-weight:600;color:#fff;">{{ $exercise['name'] }}</div>
-                        <div style="font-size:12px;color:#666;margin-top:2px;">{{ $exercise['sets'] }} sets × {{ $exercise['reps'] }} reps</div>
+                        <div style="font-size:12px;color:#666;margin-top:2px;">
+                            {{ count($exercise['sets'] ?? []) }} sets · {{ collect($exercise['sets'] ?? [])->pluck('reps')->join(', ') }} reps
+                        </div>
                     </div>
                     <div style="width:22px;height:22px;border-radius:50%;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;">
                         <svg width="12" height="12" fill="none" stroke="#10b981" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>

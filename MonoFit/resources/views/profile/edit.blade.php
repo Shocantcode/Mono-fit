@@ -159,7 +159,15 @@
                                     @foreach($workout->exercises as $exercise)
                                         <div style="display:flex;justify-content:space-between;color:#ddd;font-size:13px;">
                                             <span>{{ $exercise['name'] ?? 'Exercise' }}</span>
-                                            <span>{{ $exercise['sets'] }}x{{ $exercise['reps'] }} {{ isset($exercise['weight']) && is_numeric($exercise['weight']) ? $exercise['weight'] . ' kg' : $exercise['weight'] ?? 'Bodyweight' }}</span>
+                                            <span>
+                                                @php
+                                                    $exerciseSets = $exercise['sets'] ?? [];
+                                                    $setCount = is_array($exerciseSets) ? count($exerciseSets) : 1;
+                                                    $repsText = is_array($exerciseSets) ? collect($exerciseSets)->pluck('reps')->join(', ') : ($exercise['reps'] ?? '');
+                                                    $weightLabel = isset($exercise['weight']) && is_numeric($exercise['weight']) ? $exercise['weight'] . ' kg' : ($exercise['weight'] ?? 'Bodyweight');
+                                                @endphp
+                                                {{ $setCount }}x{{ $repsText }} {{ $weightLabel }}
+                                            </span>
                                         </div>
                                     @endforeach
                                 </div>
