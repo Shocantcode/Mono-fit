@@ -147,22 +147,37 @@
         </div>
     </div>
 
-    {{-- Weekly Summary placeholder --}}
+    {{-- Weekly Summary Weight Tracker with Line Graph --}}
     <div style="background:#141414;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:20px;margin-bottom:4px;">
-        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">Weekly Summary</h3>
-        <p style="font-size:12px;color:#555;margin-bottom:16px;">Past 7 days activity</p>
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;height:70px;gap:8px;">
-            @php
-                $days = ['M','T','W','T','F','S','S'];
-                $heights = [40, 70, 55, 80, 35, 90, 60];
-                $today = (int) now()->format('N') - 1;
-            @endphp
-            @foreach($days as $i => $day)
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                <div style="width:100%;background:{{ $i === $today ? 'linear-gradient(180deg,#ff4500,#ff6a00)' : 'rgba(255,255,255,0.06)' }};border-radius:6px;height:{{ $heights[$i] }}%;transition:all 0.3s;"></div>
-                <span style="font-size:10px;color:{{ $i === $today ? '#ff4500' : '#444' }};font-weight:{{ $i === $today ? '700' : '400' }};">{{ $day }}</span>
+        <h3 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">Weight Tracker</h3>
+        <p style="font-size:12px;color:#555;margin-bottom:16px;">Past 7 days progress</p>
+        <div style="position:relative;height:120px;margin-bottom:16px;">
+            <svg width="100%" height="100" style="overflow:visible;" id="weightChart">
+                <polyline points="10,80 25,70 40,75 55,60 70,75 85,50 100,65" fill="none" stroke="url(#gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ff4500;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="10" cy="80" r="2" fill="#ff4500" />
+                <circle cx="25" cy="70" r="2" fill="#ff4500" />
+                <circle cx="40" cy="75" r="2" fill="#ff4500" />
+                <circle cx="55" cy="60" r="2" fill="#ff4500" />
+                <circle cx="70" cy="75" r="2" fill="#ff4500" />
+                <circle cx="85" cy="50" r="2" fill="#10b981" />
+                <circle cx="100" cy="65" r="2.5" fill="#10b981" />
+            </svg>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,69,0,0.08);border:1px solid rgba(255,69,0,0.15);border-radius:12px;">
+            <div>
+                <div style="font-size:12px;color:#888;">Current Weight</div>
+                <div style="font-size:18px;font-weight:700;color:#ff4500;">72.5 kg</div>
             </div>
-            @endforeach
+            <div style="text-align:right;">
+                <div style="font-size:12px;color:#888;">Weekly Change</div>
+                <div style="font-size:18px;font-weight:700;color:#10b981;">-1.2 kg ↓</div>
+            </div>
         </div>
     </div>
 

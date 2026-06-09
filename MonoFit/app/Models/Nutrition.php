@@ -21,6 +21,7 @@ class Nutrition extends Model
 
     protected $casts = [
         'meals' => 'array',
+        'date' => 'date',
     ];
 
     public function user()

@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-
+<div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">    @php use Illuminate\Support\Facades\Auth; @endphp
     {{-- Header --}}
     <div>
         <h1 style="font-size:24px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Progress</h1>
@@ -80,14 +79,21 @@
             @php
                 $count = $weeklyActivity[$day] ?? 0;
                 $height = max(10, round(($count / $maxCount) * 100));
+                $dayDate = now()->startOfWeek()->addDays($i);
+                $dayString = $dayDate->toDateString();
+                $userProgresses = Auth::user()->progresses()->whereDate('date', $dayDate)->first();
+                $dayNotes = $userProgresses?->notes ?? null;
+                $isFinished = $dayNotes === 'day_finished';
+                $isRest = $dayNotes === 'rest_day';
+                $barColor = $isRest ? 'rgba(168,85,247,0.8)' : ($isFinished ? 'linear-gradient(180deg,#ff4500,#ff6a00)' : 'rgba(120,113,108,0.6)');
             @endphp
             <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
-                <div style="width:100%;background:{{ $i === $todayIndex ? 'linear-gradient(180deg,#ff4500,#ff6a00)' : 'rgba(255,255,255,0.07)' }};border-radius:6px 6px 4px 4px;height:{{ $height }}%;position:relative;transition:all 0.3s;min-height:8px;">
+                <div style="width:100%;background:{{ $barColor }};border-radius:6px 6px 4px 4px;height:{{ $height }}%;position:relative;transition:all 0.3s;min-height:8px;">
                     @if($i === $todayIndex)
-                    <div style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:#ff4500;border-radius:50%;"></div>
+                    <div style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:{{ $isRest ? '#a855f7' : ($isFinished ? '#ff4500' : '#787570') }};border-radius:50%;"></div>
                     @endif
                 </div>
-                <span style="font-size:10px;color:{{ $i === $todayIndex ? '#ff4500' : '#444' }};font-weight:{{ $i === $todayIndex ? '700' : '400' }};">{{ $day }}</span>
+                <span style="font-size:10px;color:{{ $i === $todayIndex ? ($isRest ? '#a855f7' : ($isFinished ? '#ff4500' : '#787570')) : '#444' }};font-weight:{{ $i === $todayIndex ? '700' : '400' }};">{{ $day }}</span>
             </div>
             @endforeach
         </div>

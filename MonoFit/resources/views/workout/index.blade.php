@@ -6,20 +6,16 @@
         <h1 style="font-size:24px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Workout</h1>
         <p style="font-size:13px;color:#666;margin-top:4px;">{{ $selectedDate->format('l, d F Y') }}</p>
     </div>
-
-    @if(session('success'))
-        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:14px;color:#d7ffd9;">{{ session('success') }}</div>
-    @endif
-
+    @php use Illuminate\Support\Facades\Auth; @endphp
     <div style="display:grid;grid-template-columns:1fr;gap:14px;">
         <div style="background:linear-gradient(135deg,#1a0800,#250d00);border:1px solid rgba(255,69,0,0.3);border-radius:20px;padding:22px;position:relative;overflow:hidden;">
             <div style="position:absolute;top:-50px;right:-50px;width:150px;height:150px;background:radial-gradient(circle,rgba(255,69,0,0.2) 0%,transparent 70%);pointer-events:none;"></div>
             <div style="font-size:40px;margin-bottom:10px;">⚡</div>
             <h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Plan and log your workout</h2>
             <p style="font-size:13px;color:#888;margin-bottom:20px;">Choose a date, add exercises, and keep track of planned or finished workouts.</p>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-                <button type="button" onclick="openWorkoutModal()" style="background:linear-gradient(135deg,#ff4500,#ff6a00);color:#fff;border:none;padding:14px 26px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;min-width:180px;">Add Workout</button>
-                <a href="{{ route('exercises.index') }}" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;text-decoration:none;padding:14px 26px;border-radius:12px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:180px;">Browse Exercise Library</a>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <button type="button" onclick="openWorkoutModal()" style="background:linear-gradient(135deg,#ff4500,#ff6a00);color:#fff;border:none;padding:14px 26px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:100%;">Add Workout</button>
+                <a href="{{ route('exercises.index') }}" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;text-decoration:none;padding:14px 26px;border-radius:12px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;width:100%;">Browse Exercise Library</a>
             </div>
         </div>
 
@@ -48,13 +44,16 @@
                             $isSelected = $day->isSameDay($selectedDate);
                             $isToday = $day->isToday();
                             $hasWorkout = in_array($dayString, $monthWorkouts);
+                            $dayProgress = Auth::user()->progresses()->whereDate('date', $day)->first();
+                            $dayNotes = $dayProgress?->notes ?? null;
+                            $isFinished = $dayNotes === 'day_finished';
+                            $isRest = $dayNotes === 'rest_day';
+                            $dotColor = $isFinished ? '#10b981' : ($isRest ? '#a855f7' : ($hasWorkout ? '#fbbf24' : 'transparent'));
                         @endphp
                         <a href="{{ route('workout.index', ['date' => $dayString, 'month' => $calendarMonth->month, 'year' => $calendarMonth->year]) }}" style="display:block;min-height:72px;padding:12px;border-radius:18px;text-decoration:none;color:#fff;background:{{ $isSelected ? 'rgba(255,69,0,0.16)' : 'rgba(255,255,255,0.03)' }};border:1px solid {{ $isSelected ? 'rgba(255,69,0,0.35)' : 'rgba(255,255,255,0.06)' }};position:relative;">
                             <div style="font-size:14px;font-weight:700;">{{ $day->day }}</div>
-                            @if($isToday)
-                                <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#10b981;border-radius:999px;"></div>
-                            @elseif($hasWorkout)
-                                <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#f59e0b;border-radius:999px;"></div>
+                            @if($dotColor !== 'transparent')
+                                <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:{{ $dotColor }};border-radius:999px;"></div>
                             @endif
                         </a>
                     @endif
@@ -124,7 +123,7 @@
                     <div style="margin-top:18px;display:flex;flex-direction:column;gap:14px;">
                         @foreach($selectedWorkoutExercises as $index => $exercise)
                             <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:16px;">
-                                <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;">
+                                <div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between;">
                                     <div style="display:flex;gap:12px;align-items:center;flex:1;min-width:0;">
                                         <img src="{{ asset(str_replace(' ', '%20', $exercise['image_path'])) }}" alt="{{ $exercise['name'] }}" style="width:62px;height:62px;object-fit:cover;border-radius:16px;border:1px solid rgba(255,255,255,0.08);" />
                                         <div style="min-width:0;">
@@ -132,32 +131,30 @@
                                             <div style="font-size:12px;color:#888;">{{ $exercise['category'] }} · {{ $exercise['equipment'] }}</div>
                                         </div>
                                     </div>
-                                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:0;">
+                                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
                                         <span style="font-size:12px;color:{{ $exercise['completed'] ? '#10b981' : '#fbbf24' }};font-weight:700;">{{ $exercise['completed'] ? 'Completed' : 'Pending' }}</span>
-                                        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
-                                            <form method="POST" action="{{ route('workout.exercise.toggle', ['workout' => $selectedWorkout, 'index' => $index]) }}" style="margin:0;">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" style="background:{{ $exercise['completed'] ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg,#10b981,#14b8a6)' }};border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 12px;border-radius:12px;font-size:12px;cursor:pointer;white-space:nowrap;">
-                                                    {{ $exercise['completed'] ? 'Mark Pending' : 'Mark Completed' }}
-                                                </button>
-                                            </form>
-                                            <form method="POST" action="{{ route('workout.exercise.delete', ['workout' => $selectedWorkout, 'index' => $index]) }}" onsubmit="return confirm('Delete this exercise from the workout?');" style="margin:0;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:8px 12px;border-radius:12px;font-size:12px;cursor:pointer;white-space:nowrap;">Delete</button>
-                                            </form>
-                                        </div>
+                                        <form method="POST" action="{{ route('workout.exercise.toggle', ['workout' => $selectedWorkout, 'index' => $index]) }}" style="margin:0;width:100%;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" style="background:{{ $exercise['completed'] ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg,#10b981,#14b8a6)' }};border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 12px;border-radius:12px;font-size:12px;cursor:pointer;white-space:nowrap;width:100%;">
+                                                {{ $exercise['completed'] ? 'Mark Pending' : 'Mark Completed' }}
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('workout.exercise.delete', ['workout' => $selectedWorkout, 'index' => $index]) }}" onsubmit="return confirm('Delete this exercise from the workout?');" style="margin:0;width:100%;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:8px 12px;border-radius:12px;font-size:12px;cursor:pointer;white-space:nowrap;width:100%;">Delete</button>
+                                        </form>
                                     </div>
                                 </div>
-                                <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;">
-                                    @foreach($exercise['sets'] as $set)
-                                        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:10px 12px;min-width:100px;">
-                                            <div style="font-size:12px;color:#888;">{{ $set['weight'] ?? 'Bodyweight' }}</div>
-                                            <div style="font-size:14px;font-weight:700;color:#fff;">{{ $set['reps'] }} reps</div>
-                                        </div>
-                                    @endforeach
-                                </div>
+                            </div>
+                            <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;">
+                                @foreach($exercise['sets'] as $set)
+                                    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:10px 12px;min-width:100px;">
+                                        <div style="font-size:12px;color:#888;">{{ $set['weight'] ?? 'Bodyweight' }}</div>
+                                        <div style="font-size:14px;font-weight:700;color:#fff;">{{ $set['reps'] }} reps</div>
+                                    </div>
+                                @endforeach
                             </div>
                         @endforeach
                     </div>

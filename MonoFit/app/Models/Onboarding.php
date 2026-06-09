@@ -12,6 +12,10 @@ class Onboarding extends Model
         'user_id', 'age', 'gender', 'height', 'weight', 'body_fat', 'activity_level', 'fitness_goal', 'equipment', 'bmi', 'bmr', 'tdee', 'somatotype'
     ];
 
+    protected $casts = [
+        'equipment' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
