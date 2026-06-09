@@ -9,14 +9,19 @@
         <p style="font-size:13px;color:#888;margin-bottom:4px;">Welcome back 👋</p>
         <h2 style="font-size:24px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-0.5px;">{{ Auth::user()->name }}</h2>
         <p style="font-size:13px;color:#666;">{{ now()->format('l, d F Y') }}</p>
-        <div style="margin-top:16px;display:flex;gap:8px;">
-            <div style="background:rgba(255,69,0,0.15);border:1px solid rgba(255,69,0,0.3);border-radius:10px;padding:8px 14px;text-align:center;">
+        <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:8px;">
+            <div style="background:rgba(255,69,0,0.15);border:1px solid rgba(255,69,0,0.3);border-radius:10px;padding:14px;text-align:center;">
                 <div style="font-size:18px;font-weight:800;color:#ff4500;">{{ $streak ?? 0 }}</div>
                 <div style="font-size:10px;color:#888;margin-top:1px;">Day Streak 🔥</div>
             </div>
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:8px 14px;text-align:center;flex:1;">
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;text-align:center;">
                 <div style="font-size:13px;font-weight:600;color:#ccc;">Keep it up! Your consistency</div>
                 <div style="font-size:12px;color:#666;margin-top:2px;">is building a better you 💪</div>
+            </div>
+            <div style="background:rgba(148,163,184,0.09);border:1px solid rgba(148,163,184,0.18);border-radius:10px;padding:14px;text-align:center;">
+                <div style="font-size:13px;font-weight:600;color:#cbd5e1;">BMI</div>
+                <div style="font-size:24px;font-weight:800;color:#fff;margin-top:4px;">{{ $bmi ?? '—' }}</div>
+                <div style="font-size:11px;color:#94a3b8;margin-top:4px;">{{ $bmiLabel ?? 'Complete profile' }}</div>
             </div>
         </div>
     </div>

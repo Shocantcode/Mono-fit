@@ -15,7 +15,7 @@ class OnboardingController extends Controller
     {
         $data = $request->validate([
             'age' => 'required|integer|min:10|max:100',
-            'gender' => 'required|in:male,female,other',
+            'gender' => 'required|in:male,female',
             'height' => 'required|numeric|min:100|max:250',
             'weight' => 'required|numeric|min:30|max:250',
             'body_fat' => 'nullable|numeric|min:1|max:60',

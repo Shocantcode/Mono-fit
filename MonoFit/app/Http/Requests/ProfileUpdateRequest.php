@@ -27,7 +27,7 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'age' => ['required', 'integer', 'min:10', 'max:100'],
-            'gender' => ['required', 'in:male,female,other'],
+            'gender' => ['required', 'in:male,female'],
             'height' => ['required', 'numeric', 'min:100', 'max:250'],
             'weight' => ['required', 'numeric', 'min:30', 'max:250'],
             'activity_level' => ['required', 'string'],

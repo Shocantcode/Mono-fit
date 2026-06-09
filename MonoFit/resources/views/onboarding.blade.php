@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-    <div class="w-full max-w-md p-8 rounded-2xl shadow-xl bg-white/10 backdrop-blur-md border border-white/20">
-        <h1 class="text-3xl font-bold mb-6 text-center">Welcome to MonoFit</h1>
+    <div class="w-full max-w-md p-8 rounded-2xl shadow-xl bg-slate-950/90 border border-slate-700">
+        <h1 class="text-3xl font-bold mb-6 text-center text-white">Welcome to MonoFit</h1>
         <form method="POST" action="{{ route('onboarding.store') }}" class="space-y-4">
             @csrf
             <!-- Step 1: Age -->
@@ -14,10 +14,9 @@
             <!-- Step 2: Gender -->
             <div>
                 <label for="gender" class="block text-sm font-medium">Gender</label>
-                <select name="gender" id="gender" required class="mt-1 w-full rounded-lg bg-gray-900/60 border border-gray-700 px-4 py-2">
+                <select name="gender" id="gender" required class="mt-1 w-full rounded-lg bg-gray-900/60 border border-gray-700 px-4 py-2 text-white">
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="other">Other</option>
                 </select>
             </div>
             <!-- Step 3: Height -->

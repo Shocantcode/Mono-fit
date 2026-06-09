@@ -57,7 +57,6 @@
                     <select name="gender" required style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;outline:none;">
                         <option value="male" {{ old('gender', $onboarding?->gender) === 'male' ? 'selected' : '' }}>Male</option>
                         <option value="female" {{ old('gender', $onboarding?->gender) === 'female' ? 'selected' : '' }}>Female</option>
-                        <option value="other" {{ old('gender', $onboarding?->gender) === 'other' ? 'selected' : '' }}>Other</option>
                     </select>
                     @if($errors->has('gender'))
                         <p style="color:#ff4500;font-size:12px;margin-top:4px;">{{ $errors->first('gender') }}</p>

@@ -9,6 +9,11 @@ class DashboardController extends Controller
     public function __invoke(Request $request)
     {
         $user = $request->user();
+        $onboarding = $user->onboarding;
+
+        if (! $onboarding) {
+            return redirect()->route('onboarding.show');
+        }
 
         // Fetch today's nutrition
         $nutrition = $user->nutritions()->where('date', today())->first();
@@ -16,6 +21,12 @@ class DashboardController extends Controller
         $workout = $user->workouts()->where('date', today())->first();
         // Fetch today's progress
         $progress = $user->progresses()->where('date', today())->first();
+
+        $bmi = $onboarding->bmi ? number_format($onboarding->bmi, 1) : null;
+        $bmiLabel = null;
+        if ($onboarding->bmi) {
+            $bmiLabel = $onboarding->bmi < 18.5 ? 'Underweight' : ($onboarding->bmi < 25 ? 'Normal' : ($onboarding->bmi < 30 ? 'Overweight' : 'Obese'));
+        }
 
         return view('dashboard', [
             'calories' => $nutrition->total_calories ?? 0,
@@ -27,6 +38,9 @@ class DashboardController extends Controller
                 'exercises' => json_decode($workout->exercises, true) ?? []
             ] : null,
             'streak' => $progress->streak ?? 0,
+            'bmi' => $bmi,
+            'bmiLabel' => $bmiLabel,
+            'onboarding' => $onboarding,
         ]);
     }
 }
