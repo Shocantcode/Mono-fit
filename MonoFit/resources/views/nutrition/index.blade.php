@@ -143,14 +143,16 @@
         <div style="height:10px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;margin-bottom:18px;">
             <div style="height:100%;width:{{ $waterProgress }}%;background:linear-gradient(90deg,#06b6d4,#22d3ee);"></div>
         </div>
-        <form method="POST" action="{{ route('nutrition.water.store') }}" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;">
+        <form method="POST" action="{{ route('nutrition.water.store') }}" style="display:flex;flex-direction:column;gap:10px;">
             @csrf
-            <button type="submit" name="water_ml" value="100" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;">+100 ml</button>
-            <button type="submit" name="water_ml" value="200" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;">+200 ml</button>
-            <button type="submit" name="water_ml" value="500" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;">+500 ml</button>
-            <div style="display:flex;gap:10px;align-items:stretch;">
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
+                <button type="submit" name="water_ml" value="100" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;">+100 ml</button>
+                <button type="submit" name="water_ml" value="200" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;">+200 ml</button>
+                <button type="submit" name="water_ml" value="500" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;padding:12px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;">+500 ml</button>
+            </div>
+            <div style="display:flex;gap:10px;">
                 <input type="number" name="custom_water_ml" placeholder="Custom ml" min="1" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;color:#fff;font-size:13px;outline:none;">
-                <button type="submit" style="background:linear-gradient(135deg,#06b6d4,#22d3ee);border:none;color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Add</button>
+                <button type="submit" style="background:linear-gradient(135deg,#06b6d4,#22d3ee);border:none;color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;min-width:80px;">Add</button>
             </div>
         </form>
     </div>

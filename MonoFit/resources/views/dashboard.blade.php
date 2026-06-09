@@ -136,10 +136,6 @@
                 <div style="font-size:26px;margin-bottom:6px;">👤</div>
                 <div style="font-size:13px;font-weight:600;color:#fff;">My Profile</div>
             </a>
-            <a href="{{ route('schedule.index') }}" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:16px;text-align:center;text-decoration:none;display:block;">
-                <div style="font-size:26px;margin-bottom:6px;">📅</div>
-                <div style="font-size:13px;font-weight:600;color:#fff;">Schedule</div>
-            </a>
             <a href="{{ route('exercises.index') }}" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);border-radius:14px;padding:16px;text-align:center;text-decoration:none;display:block;">
                 <div style="font-size:26px;margin-bottom:6px;">📚</div>
                 <div style="font-size:13px;font-weight:600;color:#fff;">Exercises</div>

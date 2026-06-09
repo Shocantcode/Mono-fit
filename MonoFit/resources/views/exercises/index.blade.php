@@ -1,6 +1,16 @@
 ﻿@extends('layouts.app')
 
 @section('content')
+<style>
+    .category-button.active {
+        border: 2px solid #ff4500 !important;
+        background: rgba(255,69,0,0.1) !important;
+    }
+    .category-button:not(.active) {
+        border: 2px solid transparent !important;
+        background: rgba(255,255,255,0.05) !important;
+    }
+</style>
 <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
     <div>
         <h1 style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Exercise Library</h1>
@@ -14,9 +24,9 @@
         </div>
 
         <div id="category-buttons" style="display:flex;flex-wrap:wrap;gap:10px;">
-            <button type="button" class="category-button active" data-category="All" style="border:none;background:rgba(255,255,255,0.05);color:#fff;padding:10px 16px;border-radius:999px;cursor:pointer;font-size:13px;">All</button>
+            <button type="button" class="category-button active" data-category="All" style="border:2px solid #ff4500;background:rgba(255,69,0,0.1);color:#fff;padding:10px 16px;border-radius:999px;cursor:pointer;font-size:13px;">All</button>
             @foreach($categories as $category)
-                <button type="button" class="category-button" data-category="{{ $category }}" style="border:none;background:rgba(255,255,255,0.05);color:#fff;padding:10px 16px;border-radius:999px;cursor:pointer;font-size:13px;">{{ $category }}</button>
+                <button type="button" class="category-button" data-category="{{ $category }}" style="border:2px solid transparent;background:rgba(255,255,255,0.05);color:#fff;padding:10px 16px;border-radius:999px;cursor:pointer;font-size:13px;transition:all 0.2s;">{{ $category }}</button>
             @endforeach
         </div>
 

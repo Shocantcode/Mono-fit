@@ -8,7 +8,7 @@ use App\Http\Controllers\WorkoutController;
 use App\Http\Controllers\NutritionController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\ExerciseController;
-use App\Http\Controllers\ScheduleController;
+
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\ReminderController;
 
@@ -33,6 +33,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/workout', [WorkoutController::class, 'index'])->name('workout.index');
     Route::post('/workout', [WorkoutController::class, 'store'])->name('workout.store');
     Route::patch('/workout/{workout}/toggle', [WorkoutController::class, 'toggle'])->name('workout.toggle');
+    Route::patch('/workout/{workout}/exercise/{index}/toggle', [WorkoutController::class, 'toggleExercise'])->name('workout.exercise.toggle');
+    Route::delete('/workout/{workout}/exercise/{index}', [WorkoutController::class, 'deleteExercise'])->name('workout.exercise.delete');
+    Route::delete('/workout/{workout}', [WorkoutController::class, 'destroy'])->name('workout.destroy');
+    Route::post('/workout/day-status', [WorkoutController::class, 'markDayStatus'])->name('workout.day.status');
+    Route::post('/workout/day-status/cancel', [WorkoutController::class, 'cancelDayStatus'])->name('workout.day.status.cancel');
 
     // Nutrition
     Route::get('/nutrition', [NutritionController::class, 'index'])->name('nutrition.index');
@@ -49,9 +54,6 @@ Route::middleware('auth')->group(function () {
 
     // Exercise Library
     Route::get('/exercises', [ExerciseController::class, 'index'])->name('exercises.index');
-
-    // Workout Schedule
-    Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
 
     // Body Calculator
     Route::get('/calculator', [CalculatorController::class, 'index'])->name('calculator.index');

@@ -52,10 +52,9 @@
                         <a href="{{ route('workout.index', ['date' => $dayString, 'month' => $calendarMonth->month, 'year' => $calendarMonth->year]) }}" style="display:block;min-height:72px;padding:12px;border-radius:18px;text-decoration:none;color:#fff;background:{{ $isSelected ? 'rgba(255,69,0,0.16)' : 'rgba(255,255,255,0.03)' }};border:1px solid {{ $isSelected ? 'rgba(255,69,0,0.35)' : 'rgba(255,255,255,0.06)' }};position:relative;">
                             <div style="font-size:14px;font-weight:700;">{{ $day->day }}</div>
                             @if($isToday)
-                                <div style="font-size:11px;color:#10b981;margin-top:6px;">Today</div>
-                            @endif
-                            @if($hasWorkout)
                                 <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#10b981;border-radius:999px;"></div>
+                            @elseif($hasWorkout)
+                                <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#f59e0b;border-radius:999px;"></div>
                             @endif
                         </a>
                     @endif
@@ -78,14 +77,36 @@
                             <div style="font-size:14px;color:#888;">Status</div>
                             <div style="font-size:17px;font-weight:700;color:{{ $selectedWorkout->completed ? '#10b981' : '#f59e0b' }};">{{ $selectedWorkout->completed ? 'Finished' : 'Planned' }}</div>
                         </div>
-                        <form method="POST" action="{{ route('workout.toggle', $selectedWorkout) }}">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" style="background:{{ $selectedWorkout->completed ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg,#10b981,#14b8a6)' }};border:1px solid rgba(255,255,255,0.12);color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;cursor:pointer;">
-                                {{ $selectedWorkout->completed ? 'Mark as Planned' : 'Mark Completed' }}
-                            </button>
-                        </form>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                            @if($allExercisesCompleted && ! $dayFinished)
+                                <form method="POST" action="{{ route('workout.day.status') }}" onsubmit="return confirm('Finish the day? This will count toward your streak if all exercises are completed.');">
+                                    @csrf
+                                    <input type="hidden" name="date" value="{{ $selectedDate->toDateString() }}">
+                                    <input type="hidden" name="action" value="finish_day">
+                                    <button type="submit" style="background:linear-gradient(135deg,#10b981,#14b8a6);border:none;color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;cursor:pointer;">Finish Day</button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
+                    @if($dayRest)
+                        <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);color:#10b981;">
+                            <span>Rest day recorded for this date.</span>
+                            <form method="POST" action="{{ route('workout.day.status.cancel') }}" style="margin:0;" onsubmit="return confirm('Cancel rest day? Streak will decrease by 1.');">
+                                @csrf
+                                <input type="hidden" name="date" value="{{ $selectedDate->toDateString() }}">
+                                <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:8px 12px;border-radius:10px;font-size:12px;cursor:pointer;">Cancel</button>
+                            </form>
+                        </div>
+                    @elseif($dayFinished)
+                        <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);color:#38bdf8;">
+                            <span>This day is finished and counted toward your streak.</span>
+                            <form method="POST" action="{{ route('workout.day.status.cancel') }}" style="margin:0;" onsubmit="return confirm('Cancel finished day? Streak will decrease by 1.');">
+                                @csrf
+                                <input type="hidden" name="date" value="{{ $selectedDate->toDateString() }}">
+                                <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:8px 12px;border-radius:10px;font-size:12px;cursor:pointer;">Cancel</button>
+                            </form>
+                        </div>
+                    @endif
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:18px;">
                         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:14px;">
                             <div style="font-size:12px;color:#888;">Total Exercises</div>
@@ -101,15 +122,33 @@
                         </div>
                     </div>
                     <div style="margin-top:18px;display:flex;flex-direction:column;gap:14px;">
-                        @foreach($selectedWorkout->exercises as $exercise)
+                        @foreach($selectedWorkoutExercises as $index => $exercise)
                             <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:16px;">
-                                <div style="display:flex;gap:12px;align-items:center;">
-                                    <img src="{{ asset(str_replace(' ', '%20', $exercise['image_path'])) }}" alt="{{ $exercise['name'] }}" style="width:62px;height:62px;object-fit:cover;border-radius:16px;border:1px solid rgba(255,255,255,0.08);" />
-                                    <div style="flex:1;min-width:0;">
-                                        <div style="font-size:14px;font-weight:700;color:#fff;">{{ $exercise['name'] }}</div>
-                                        <div style="font-size:12px;color:#888;">{{ $exercise['category'] }} · {{ $exercise['equipment'] }}</div>
+                                <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;">
+                                    <div style="display:flex;gap:12px;align-items:center;flex:1;min-width:0;">
+                                        <img src="{{ asset(str_replace(' ', '%20', $exercise['image_path'])) }}" alt="{{ $exercise['name'] }}" style="width:62px;height:62px;object-fit:cover;border-radius:16px;border:1px solid rgba(255,255,255,0.08);" />
+                                        <div style="min-width:0;">
+                                            <div style="font-size:14px;font-weight:700;color:#fff;">{{ $exercise['name'] }}</div>
+                                            <div style="font-size:12px;color:#888;">{{ $exercise['category'] }} · {{ $exercise['equipment'] }}</div>
+                                        </div>
                                     </div>
-                                    <div style="font-size:12px;color:#aaa;text-align:right;">Sets: {{ count($exercise['sets']) }}</div>
+                                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:0;">
+                                        <span style="font-size:12px;color:{{ $exercise['completed'] ? '#10b981' : '#fbbf24' }};font-weight:700;">{{ $exercise['completed'] ? 'Completed' : 'Pending' }}</span>
+                                        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+                                            <form method="POST" action="{{ route('workout.exercise.toggle', ['workout' => $selectedWorkout, 'index' => $index]) }}" style="margin:0;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" style="background:{{ $exercise['completed'] ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg,#10b981,#14b8a6)' }};border:1px solid rgba(255,255,255,0.12);color:#fff;padding:8px 12px;border-radius:12px;font-size:12px;cursor:pointer;white-space:nowrap;">
+                                                    {{ $exercise['completed'] ? 'Mark Pending' : 'Mark Completed' }}
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('workout.exercise.delete', ['workout' => $selectedWorkout, 'index' => $index]) }}" onsubmit="return confirm('Delete this exercise from the workout?');" style="margin:0;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:8px 12px;border-radius:12px;font-size:12px;cursor:pointer;white-space:nowrap;">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;">
                                     @foreach($exercise['sets'] as $set)
@@ -122,10 +161,46 @@
                             </div>
                         @endforeach
                     </div>
+                    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+                        <form method="POST" action="{{ route('workout.destroy', $selectedWorkout) }}" onsubmit="return confirm('Clear today plan? This will remove all exercises for this date.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:12px 18px;border-radius:14px;font-size:14px;cursor:pointer;">Clear Today Plan</button>
+                        </form>
+                    </div>
                 </div>
             @else
                 <div style="margin-top:16px;padding:18px;border:1px dashed rgba(255,255,255,0.12);border-radius:18px;color:#bbb;">
                     Tidak ada workout yang direncanakan untuk tanggal ini. Tambahkan latihan untuk mulai mencatat atau merencanakan sesi.
+                </div>
+                <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                    @if(! $dayRest && ! $dayFinished)
+                        <form method="POST" action="{{ route('workout.day.status') }}" onsubmit="return confirm('Mark this date as a rest day?');">
+                            @csrf
+                            <input type="hidden" name="date" value="{{ $selectedDate->toDateString() }}">
+                            <input type="hidden" name="action" value="rest_day">
+                            <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:12px 18px;border-radius:14px;font-size:14px;cursor:pointer;">Mark Rest Day</button>
+                        </form>
+                    @endif
+                    @if($dayRest)
+                        <div style="padding:12px 14px;border-radius:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);color:#10b981;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                            <span>Rest day recorded for this date.</span>
+                            <form method="POST" action="{{ route('workout.day.status.cancel') }}" style="margin:0;" onsubmit="return confirm('Cancel rest day? Streak will decrease by 1.');">
+                                @csrf
+                                <input type="hidden" name="date" value="{{ $selectedDate->toDateString() }}">
+                                <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:8px 12px;border-radius:10px;font-size:12px;cursor:pointer;">Cancel</button>
+                            </form>
+                        </div>
+                    @elseif($dayFinished)
+                        <div style="padding:12px 14px;border-radius:14px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);color:#38bdf8;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                            <span>This day is finished and counted toward your streak.</span>
+                            <form method="POST" action="{{ route('workout.day.status.cancel') }}" style="margin:0;" onsubmit="return confirm('Cancel finished day? Streak will decrease by 1.');">
+                                @csrf
+                                <input type="hidden" name="date" value="{{ $selectedDate->toDateString() }}">
+                                <button type="submit" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:#f97316;padding:8px 12px;border-radius:10px;font-size:12px;cursor:pointer;">Cancel</button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>
@@ -146,6 +221,10 @@
                         </div>
                         <div style="font-size:13px;color:#bbb;line-height:1.5;margin-bottom:12px;">{{ $program['desc'] }}</div>
                         <div style="font-size:12px;color:#888;">{{ $program['detail'] }}</div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+                        <button type="button" onclick="openProgramExercise({{ $program['exercise_id'] }}, '{{ $selectedDate->toDateString() }}')" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:10px 14px;border-radius:14px;font-size:13px;cursor:pointer;">Add to Today Plan</button>
+                        <button type="button" onclick="openProgramExercise({{ $program['exercise_id'] }})" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;padding:10px 14px;border-radius:14px;font-size:13px;cursor:pointer;">Add to Plans</button>
+                    </div>
                     </div>
                 @endforeach
             </div>
@@ -357,6 +436,13 @@
         }
         if (!setsTable.children.length) {
             addSetRow();
+        }
+    }
+
+    function openProgramExercise(exerciseId, date = null) {
+        openWorkoutModal(exerciseId);
+        if (date) {
+            document.getElementById('selected-date-input').value = date;
         }
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exercise;
+use App\Models\Progress;
 use App\Models\Workout;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class WorkoutController extends Controller
             : $selectedDate->copy()->startOfMonth();
 
         $selectedWorkout = $user->workouts()->whereDate('date', $selectedDate)->first();
+        $selectedDateProgress = $user->progresses()->whereDate('date', $selectedDate)->first();
 
         $exercises = Exercise::orderBy('category')->orderBy('name')->get();
         $categories = Exercise::select('category')->distinct()->pluck('category');
@@ -31,6 +33,24 @@ class WorkoutController extends Controller
             ->pluck('date')
             ->map(fn ($date) => Carbon::parse($date)->toDateString())
             ->toArray();
+
+        $selectedWorkoutExercises = [];
+        $allExercisesCompleted = false;
+        if ($selectedWorkout) {
+            $selectedWorkoutExercises = is_array($selectedWorkout->exercises)
+                ? $selectedWorkout->exercises
+                : json_decode($selectedWorkout->exercises ?? '[]', true) ?? [];
+
+            $selectedWorkoutExercises = array_map(function ($exercise) {
+                $exercise['completed'] = isset($exercise['completed']) ? (bool) $exercise['completed'] : false;
+                return $exercise;
+            }, $selectedWorkoutExercises);
+
+            $allExercisesCompleted = count($selectedWorkoutExercises) > 0 && collect($selectedWorkoutExercises)->every(fn ($exercise) => $exercise['completed']);
+        }
+
+        $dayRest = $selectedDateProgress?->notes === 'rest_day';
+        $dayFinished = $selectedDateProgress?->notes === 'day_finished';
 
         $calendarDays = [];
         $firstDayOfMonth = $calendarMonth->copy()->startOfMonth();
@@ -108,12 +128,41 @@ class WorkoutController extends Controller
         $fitnessGoal = $user->onboarding?->fitness_goal ?? 'maintenance';
         $recommendedPrograms = $programGoals[$fitnessGoal] ?? $programGoals['maintenance'];
 
+        $exerciseNames = $exercises->keyBy('name');
+        $recommendedNames = [
+            'maintenance' => [
+                'Balanced Maintenance' => 'Plank',
+                'Strength & Recovery' => 'Goblet Squat',
+                'Mobility Boost' => 'Walking Lunge',
+            ],
+            'muscle_gain' => [
+                'Hypertrophy Split' => 'Barbell Squat',
+                'Push/Pull/Legs' => 'Bench Press',
+                'Strength Focus' => 'Overhead Press',
+            ],
+            'fat_loss' => [
+                'Fat Loss Circuit' => 'Burpees',
+                'Full Body Conditioning' => 'Mountain Climbers',
+                'Interval Strength' => 'Kettlebell Swing',
+            ],
+        ];
+
+        $recommendedPrograms = array_map(function ($program) use ($exerciseNames, $recommendedNames, $fitnessGoal, $exercises) {
+            $name = $recommendedNames[$fitnessGoal][$program['title']] ?? null;
+            $exerciseId = $exerciseNames[$name]?->id ?? $exercises->first()?->id;
+            return array_merge($program, ['exercise_id' => $exerciseId]);
+        }, $recommendedPrograms);
+
         return view('workout.index', compact(
             'selectedDate',
             'calendarMonth',
             'calendarDays',
             'monthWorkouts',
             'selectedWorkout',
+            'selectedWorkoutExercises',
+            'allExercisesCompleted',
+            'dayRest',
+            'dayFinished',
             'exercises',
             'categories',
             'recommendedPrograms',
@@ -168,6 +217,7 @@ class WorkoutController extends Controller
             'image_path' => $exerciseModel->image_path,
             'sets' => $sets,
             'logged_at' => now()->toDateTimeString(),
+            'completed' => $data['plan_action'] === 'finish',
         ];
 
         $workout = $request->user()->workouts()->firstOrNew([
@@ -205,6 +255,158 @@ class WorkoutController extends Controller
         $workout->save();
 
         return redirect()->route('workout.index', ['date' => $selectedDate])->with('success', 'Workout updated successfully.');
+    }
+
+    public function toggleExercise(Request $request, Workout $workout, $exerciseIndex)
+    {
+        if ($workout->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $exercises = is_array($workout->exercises)
+            ? $workout->exercises
+            : json_decode($workout->exercises ?? '[]', true);
+
+        if (! isset($exercises[$exerciseIndex])) {
+            return redirect()->back()->with('error', 'Exercise not found.');
+        }
+
+        $exercises[$exerciseIndex]['completed'] = ! ($exercises[$exerciseIndex]['completed'] ?? false);
+        $workout->exercises = $exercises;
+        $workout->completed = collect($exercises)->every(fn ($item) => ($item['completed'] ?? false));
+        $workout->save();
+
+        return redirect()->route('workout.index', ['date' => $workout->date->toDateString()])->with('success', 'Exercise status updated.');
+    }
+
+    public function deleteExercise(Request $request, Workout $workout, $exerciseIndex)
+    {
+        if ($workout->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $exercises = is_array($workout->exercises)
+            ? $workout->exercises
+            : json_decode($workout->exercises ?? '[]', true);
+
+        if (! isset($exercises[$exerciseIndex])) {
+            return redirect()->back()->with('error', 'Exercise not found.');
+        }
+
+        array_splice($exercises, $exerciseIndex, 1);
+
+        if (empty($exercises)) {
+            $workout->delete();
+            return redirect()->route('workout.index', ['date' => $workout->date->toDateString()])->with('success', 'Last exercise removed. Workout deleted.');
+        }
+
+        $totalSets = 0;
+        $totalWeight = 0;
+        foreach ($exercises as $item) {
+            foreach ($item['sets'] as $set) {
+                $totalSets++;
+                if (is_numeric($set['weight'])) {
+                    $totalWeight += (float) $set['weight'];
+                }
+            }
+        }
+
+        $workout->exercises = $exercises;
+        $workout->total_sets = $totalSets;
+        $workout->total_weight = $totalWeight ?: null;
+        $workout->completed = collect($exercises)->every(fn ($item) => ($item['completed'] ?? false));
+        $workout->save();
+
+        return redirect()->route('workout.index', ['date' => $workout->date->toDateString()])->with('success', 'Exercise removed from workout.');
+    }
+
+    public function markDayStatus(Request $request)
+    {
+        $data = $request->validate([
+            'date' => ['required', 'date'],
+            'action' => ['required', 'in:finish_day,rest_day'],
+        ]);
+
+        $selectedDate = Carbon::parse($data['date'])->toDateString();
+        $user = $request->user();
+        $workout = $user->workouts()->whereDate('date', $selectedDate)->first();
+        $progress = $user->progresses()->firstOrNew([
+            'user_id' => $user->id,
+            'date' => $selectedDate,
+        ]);
+
+        if ($data['action'] === 'finish_day') {
+            $exercises = $workout
+                ? (is_array($workout->exercises) ? $workout->exercises : json_decode($workout->exercises ?? '[]', true))
+                : [];
+
+            $allCompleted = count($exercises) > 0 && collect($exercises)->every(fn ($exercise) => ($exercise['completed'] ?? false));
+
+            if (! $allCompleted) {
+                return redirect()->back()->with('error', 'Complete all exercises before finishing the day.');
+            }
+
+            $progress->workout_completed = true;
+            $progress->notes = 'day_finished';
+        } else {
+            $progress->workout_completed = false;
+            $progress->notes = 'rest_day';
+        }
+
+        $yesterday = Carbon::parse($selectedDate)->copy()->subDay()->toDateString();
+        $previous = $user->progresses()->whereDate('date', $yesterday)->first();
+        $previousStreak = $previous?->streak ?? 0;
+
+        if ($previous && ($previous->notes === 'rest_day' || $previous->notes === 'day_finished' || $previous->workout_completed)) {
+            $progress->streak = $previousStreak + 1;
+        } else {
+            $progress->streak = 1;
+        }
+
+        $progress->user_id = $user->id;
+        $progress->save();
+
+        return redirect()->route('workout.index', ['date' => $selectedDate])->with('success', $data['action'] === 'finish_day' ? 'Day marked finished.' : 'Rest day recorded.');
+    }
+
+    public function cancelDayStatus(Request $request)
+    {
+        $data = $request->validate([
+            'date' => ['required', 'date'],
+        ]);
+
+        $selectedDate = Carbon::parse($data['date'])->toDateString();
+        $user = $request->user();
+        $progress = $user->progresses()->firstOrNew([
+            'user_id' => $user->id,
+            'date' => $selectedDate,
+        ]);
+
+        if (!$progress->exists) {
+            return redirect()->back()->with('error', 'No status to cancel for this date.');
+        }
+
+        $currentStreak = $progress->streak ?? 0;
+        $newStreak = max(0, $currentStreak - 1);
+
+        $progress->workout_completed = false;
+        $progress->notes = null;
+        $progress->streak = $newStreak;
+        $progress->save();
+
+        return redirect()->route('workout.index', ['date' => $selectedDate])->with('success', 'Day status canceled. Streak decreased by 1.');
+    }
+
+    public function destroy(Workout $workout)
+    {
+        if ($workout->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $date = $workout->date->toDateString();
+        $workout->delete();
+
+        return redirect()->route('workout.index', ['date' => $date])->with('success', 'Workout removed from today plan.');
     }
 
     public function toggle(Workout $workout)
